@@ -1,4 +1,4 @@
-# 3. Aufgabe - serverseitige Anwendung erstellen
+ # 3. Aufgabe - serverseitige Anwendung erstellen
 
 Die dritte Aufgabe beschäftigt sich mit dem **GTA-Server**. Der GTA-Server
 verwaltet die GeoTags und bietet dem Client Funktionen zum Abfragen und
