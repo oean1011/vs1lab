@@ -17,6 +17,7 @@ var express = require('express');
 var app;
 app = express();
 app.use(logger('dev'));
+app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({
     extended: false
 }));
