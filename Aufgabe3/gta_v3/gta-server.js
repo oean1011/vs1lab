@@ -72,8 +72,12 @@ var searchByRadius = function(latitude2, longitude2, closeTags) {
     }
 };
 
-var searchByTerm = function(searchterm) {
-
+var searchByTerm = function(searchterm, closeTags) {
+    for (index = 0; index < geoTags.length; index++) {
+        if(geoTags[index].name == searchterm) {
+            closeTags.push(geoTags[index]);
+        }
+    }
 };
 
 var addTag = function(latitude, longitude, name, hashtag) {
@@ -146,10 +150,13 @@ app.post('/tagging', function(req, res) {
 // TODO: CODE ERGÄNZEN
 
 app.post('/discovery', function(req, res) {
-    console.log(req.body);
+    closeTags = [];
 
-
-    //searchByRadius(req.body.latitude, req.body.longitude, closeTags);
+    if(req.body.searchterm == "") {
+        searchByRadius(req.body.latitudehidden, req.body.longitudehidden, closeTags);
+    } else {
+        searchByTerm(req.body.searchterm, closeTags);
+    }
 
     res.render('gta', {
         taglist: closeTags

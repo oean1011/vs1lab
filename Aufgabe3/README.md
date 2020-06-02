@@ -70,7 +70,7 @@ einzelnen gibt es folgende Teilaufgaben:
 - Backend Funktionen zur Verwaltung von GeoTags
   - Einen **Konstruktor für GeoTag Objekte** erstellen
   - Ein Modul für die **Speicherung und Suche von GeoTag Objekten** erstellen
-- Server Endpunkte
+  - Server Endpunkte
   - **Statische Dateien** bereitstellen
   - Die **1. Route** `/` zur **Erzeugung der Einstiegsseite** ist vorgegeben
     (hier sieht man, wie mit EJS eine HTML-Seite erzeugt wird)
