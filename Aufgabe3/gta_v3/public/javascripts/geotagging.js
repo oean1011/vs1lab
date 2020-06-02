@@ -120,7 +120,6 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
         readme: "Dieses Objekt enthält 'öffentliche' Teile des Moduls.",
 
         updateLocation: function() {
-            // TODO Hier Inhalt der Funktion "update" ergänzen
 
             var erfolg = function(position) {
                 var lati = getLatitude(position);
@@ -128,8 +127,8 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
 
                 document.getElementById("text_field_latitude").setAttribute("value", lati);
                 document.getElementById("text_field_longitude").setAttribute("value", longi);
-                document.getElementById("latitude_hidden").setAttribute("value", lati);
-                document.getElementById("longitude_hidden").setAttribute("value", longi);
+                document.getElementById("latitudehidden").setAttribute("value", lati);
+                document.getElementById("longitudehidden").setAttribute("value", longi);
 
                 var tags = []; 
 
@@ -153,7 +152,5 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
  * des Skripts.
  */
 $(function() {
-    //alert("Please change the script 'geotagging.js'");
-    // TODO Hier den Aufruf für updateLocation einfügen
     gtaLocator.updateLocation();
 });

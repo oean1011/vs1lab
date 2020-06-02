@@ -17,7 +17,6 @@ var express = require('express');
 var app;
 app = express();
 app.use(logger('dev'));
-app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({
     extended: false
 }));
@@ -30,12 +29,21 @@ app.set('view engine', 'ejs');
  * Teste das Ergebnis im Browser unter 'http://localhost:3000/'.
  */
 
-// TODO: CODE ERGÄNZEN
+app.use(express.static(__dirname + '/public'));
 
 /**
  * Konstruktor für GeoTag Objekte.
  * GeoTag Objekte sollen min. alle Felder des 'tag-form' Formulars aufnehmen.
  */
+
+ class GeoTag {
+     constructor(latitude, longitude, name, hashtag) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.name = name;
+        this.hashtag = hashtag;
+     }
+ }
 
 // TODO: CODE ERGÄNZEN
 
@@ -49,6 +57,35 @@ app.set('view engine', 'ejs');
  */
 
 // TODO: CODE ERGÄNZEN
+
+var geoTags = [];
+var closeTags = [];
+
+var searchByRadius = function(latitude2, longitude2, closeTags) {
+    
+    for (index = 0; index < geoTags.length; index++) {
+        if(geoTags[index].latitude - latitude2 <= 1 && geoTags[index].latitude - latitude2 >= -1) {
+            if(geoTags[index].longitude - longitude2 <= 1 && geoTags[index].longitude - longitude2 >= -1) {
+                closeTags.push(geoTags[index]);
+            }
+        }
+    }
+};
+
+var searchByTerm = function(searchterm) {
+
+};
+
+var addTag = function(latitude, longitude, name, hashtag) {
+    var newTag = new GeoTag(latitude, longitude, name, hashtag);
+    geoTags.push(newTag);
+
+    console.log(geoTags);
+};
+
+var removeTag = function(index) {
+    geoTags.splice(index, 1);
+}
 
 /**
  * Route mit Pfad '/' für HTTP 'GET' Requests.
@@ -80,6 +117,20 @@ app.get('/', function(req, res) {
 
 // TODO: CODE ERGÄNZEN START
 
+app.post('/tagging', function(req, res) {
+    console.log(req.body);
+    addTag(req.body.latitude, req.body.longitude, req.body.tagname, req.body.taghashtag);
+
+
+    closeTags = [];
+
+    searchByRadius(req.body.latitude, req.body.longitude, closeTags);
+
+    res.render('gta', {
+        taglist: closeTags
+    });
+});
+
 /**
  * Route mit Pfad '/discovery' für HTTP 'POST' Requests.
  * (http://expressjs.com/de/4x/api.html#app.post.method)
@@ -93,6 +144,17 @@ app.get('/', function(req, res) {
  */
 
 // TODO: CODE ERGÄNZEN
+
+app.post('/discovery', function(req, res) {
+    console.log(req.body);
+
+
+    //searchByRadius(req.body.latitude, req.body.longitude, closeTags);
+
+    res.render('gta', {
+        taglist: closeTags
+    });
+});
 
 /**
  * Setze Port und speichere in Express.
