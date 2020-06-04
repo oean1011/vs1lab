@@ -101,6 +101,8 @@ var removeTag = function(index) {
  */
 
 app.get('/', function(req, res) {
+    console.log(req.body);
+
     res.render('gta', {
         taglist: []
     });
