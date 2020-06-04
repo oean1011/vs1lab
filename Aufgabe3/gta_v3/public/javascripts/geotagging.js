@@ -119,6 +119,8 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
 
         readme: "Dieses Objekt enthält 'öffentliche' Teile des Moduls.",
 
+    //TODO: clean up und refractoring
+
         updateLocation: function() {
             var tags = []; 
 

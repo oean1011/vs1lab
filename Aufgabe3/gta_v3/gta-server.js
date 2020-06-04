@@ -45,8 +45,6 @@ app.use(express.static(__dirname + '/public'));
      }
  }
 
-// TODO: CODE ERGÄNZEN
-
 /**
  * Modul für 'In-Memory'-Speicherung von GeoTags mit folgenden Komponenten:
  * - Array als Speicher für Geo Tags.
@@ -55,8 +53,6 @@ app.use(express.static(__dirname + '/public'));
  * - Funktion zum hinzufügen eines Geo Tags.
  * - Funktion zum Löschen eines Geo Tags.
  */
-
-// TODO: CODE ERGÄNZEN
 
 var geoTags = [];
 var closeTags = [];
@@ -101,9 +97,8 @@ var removeTag = function(index) {
  */
 
 app.get('/', function(req, res) {
-    console.log(req.body);
 
-    res.render('gta', {
+    res.render('gta', { //TODO: ergänzen?
         taglist: []
     });
 });
@@ -121,8 +116,6 @@ app.get('/', function(req, res) {
  * Die Objekte liegen in einem Standard Radius um die Koordinate (lat, lon).
  */
 
-// TODO: CODE ERGÄNZEN START
-
 app.post('/tagging', function(req, res) {
     console.log(req.body);
     addTag(req.body.latitude, req.body.longitude, req.body.tagname, req.body.taghashtag);
@@ -133,6 +126,8 @@ app.post('/tagging', function(req, res) {
     searchByRadius(req.body.latitude, req.body.longitude, closeTags);
 
     res.render('gta', {
+        reloadLatitude: req.body.latitude, //TODO: KORRIGIEREN
+        reloadLongitude: req.body.longitude,
         taglist: closeTags
     });
 });
@@ -149,8 +144,6 @@ app.post('/tagging', function(req, res) {
  * Falls 'term' vorhanden ist, wird nach Suchwort gefiltert.
  */
 
-// TODO: CODE ERGÄNZEN
-
 app.post('/discovery', function(req, res) {
     closeTags = [];
 
@@ -161,6 +154,8 @@ app.post('/discovery', function(req, res) {
     }
 
     res.render('gta', {
+        reloadLatitude: req.body.latitudehidden, //TODO: KORRIGIEREN
+        reloadLongitude: req.body.longitudehidden,
         taglist: closeTags
     });
 });
