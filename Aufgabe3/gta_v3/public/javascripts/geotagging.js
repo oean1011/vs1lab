@@ -143,6 +143,11 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
 
             var latiInForm = document.getElementById("text_field_latitude").value;
             var longInForm = document.getElementById("text_field_longitude").value;
+
+            if(latiInForm == "" && longInForm == "") {
+                var latiInForm = document.getElementById("latitudehidden").value;
+                var longInForm = document.getElementById("longitudehidden").value;
+            }
             
 
             if (latiInForm != "" && longInForm != "") { //nicht getestet

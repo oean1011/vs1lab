@@ -98,7 +98,12 @@ var removeTag = function(index) {
 
 app.get('/', function(req, res) {
 
-    res.render('gta', { //TODO: ergänzen?
+    res.render('gta', {
+        latitudeNext: "",
+        longitudeNext: "",
+        hiddenLatNext: "",
+        hiddenLongNext: "",
+        term: "",
         taglist: []
     });
 });
@@ -126,8 +131,11 @@ app.post('/tagging', function(req, res) {
     searchByRadius(req.body.latitude, req.body.longitude, closeTags);
 
     res.render('gta', {
-        reloadLatitude: req.body.latitude, //TODO: KORRIGIEREN
-        reloadLongitude: req.body.longitude,
+        latitudeNext: req.body.latitude,
+        longitudeNext: req.body.longitude,
+        hiddenLatNext: "",
+        hiddenLongNext: "",
+        term: "",
         taglist: closeTags
     });
 });
@@ -154,8 +162,11 @@ app.post('/discovery', function(req, res) {
     }
 
     res.render('gta', {
-        reloadLatitude: req.body.latitudehidden, //TODO: KORRIGIEREN
-        reloadLongitude: req.body.longitudehidden,
+        latitudeNext: "",
+        longitudeNext: "",
+        hiddenLatNext: req.body.latitudehidden,
+        hiddenLongNext: req.body.longitudehidden,
+        term: req.body.searchterm,
         taglist: closeTags
     });
 });
