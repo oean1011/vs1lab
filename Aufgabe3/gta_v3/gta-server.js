@@ -70,7 +70,7 @@ var searchByRadius = function(latitude2, longitude2, closeTags) {
 
 var searchByTerm = function(searchterm, closeTags) {
     for (index = 0; index < geoTags.length; index++) {
-        if(geoTags[index].name == searchterm) {
+        if(geoTags[index].name.includes(searchterm)) {
             closeTags.push(geoTags[index]);
         }
     }
@@ -99,12 +99,7 @@ var removeTag = function(index) {
 app.get('/', function(req, res) {
 
     res.render('gta', {
-        latitudeNext: "",
-        longitudeNext: "",
-        hiddenLatNext: "",
-        hiddenLongNext: "",
-        term: "",
-        taglist: []
+        taglist: []       
     });
 });
 
@@ -125,7 +120,6 @@ app.post('/tagging', function(req, res) {
     console.log(req.body);
     addTag(req.body.latitude, req.body.longitude, req.body.tagname, req.body.taghashtag);
 
-
     closeTags = [];
 
     searchByRadius(req.body.latitude, req.body.longitude, closeTags);
@@ -133,9 +127,6 @@ app.post('/tagging', function(req, res) {
     res.render('gta', {
         latitudeNext: req.body.latitude,
         longitudeNext: req.body.longitude,
-        hiddenLatNext: "",
-        hiddenLongNext: "",
-        term: "",
         taglist: closeTags
     });
 });
@@ -162,8 +153,6 @@ app.post('/discovery', function(req, res) {
     }
 
     res.render('gta', {
-        latitudeNext: "",
-        longitudeNext: "",
         hiddenLatNext: req.body.latitudehidden,
         hiddenLongNext: req.body.longitudehidden,
         term: req.body.searchterm,

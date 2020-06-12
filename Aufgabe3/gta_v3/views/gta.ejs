@@ -40,11 +40,17 @@
 						<div class="container-gt">
 							<label for="text_field_latitude"> latitude </label>
 							<input type="text" name="latitude" id="text_field_latitude" placeholder="69.01379"
-								   required value="<%= latitudeNext %>"/>
+								   required
+								   <%if(taglist!=undefined) {%>
+									value="<%=latitudeNext%>"
+									<%};%> />
 
 							<label for="text_field_longitude"> longitude </label>
 							<input type="text" name="longitude" id="text_field_longitude" placeholder="69.01379"
-								   required value="<%= longitudeNext %>"/>
+								   required
+								   <%if(taglist!=undefined) {%>
+									value="<%=longitudeNext%>"
+									<%};%> />
 
 							<label for="text_field_name"> name </label>
 							<input type="text" name="tagname" id="text_field_name" placeholder="some name" required
@@ -71,9 +77,18 @@
 
 					<form id="filter-form" action="/discovery" method="post">
 						<label for="searchterm"></label>
-						<input type="text" value="<%= term %>" placeholder="search term" name="searchterm" id="searchterm">
-						<input id="latitudehidden" value="<%= hiddenLatNext %>" name="latitudehidden" type="hidden">
-						<input id="longitudehidden" value="<%= hiddenLongNext %>" name="longitudehidden" type="hidden">
+						<input type="text" placeholder="search term" name="searchterm" id="searchterm" 
+							<%if(taglist!=undefined) {%>
+								value="<%=term%>"
+							<%};%> />
+						<input id="latitudehidden" name="latitudehidden" type="hidden"
+							<%if(taglist!=undefined) {%>
+								value="<%=hiddenLatNext%>"
+							<%};%> />
+						<input id="longitudehidden" name="longitudehidden" type="hidden"
+							<%if(taglist!=undefined) {%>
+								value="<%=hiddenLongNext%>"
+							<%};%> />
 						<input id="submit-search" type="submit" value="apply">
 
  
@@ -93,7 +108,11 @@
 					</div>
 
 					<div class="tagmap">
-						<img id="result-img" src="./images/mapview.jpg" alt="a map with locations" />
+							<img id="result-img" src="./images/mapview.jpg" alt="a map with locations" 
+							<%if(taglist!=undefined) {%>
+								data-tags="<%=JSON.stringify(taglist)%>"
+							<%};%> />
+
 						<div class="caption">Result map</div>
 					</div>
 				</div>

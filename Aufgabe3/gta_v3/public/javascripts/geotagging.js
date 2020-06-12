@@ -133,6 +133,9 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
                 document.getElementById("latitudehidden").setAttribute("value", lati);
                 document.getElementById("longitudehidden").setAttribute("value", longi);
 
+                var taglist_json = document.getElementById("result-img").getAttribute("data-tags");
+                tags = JSON.parse(taglist_json);
+
                 var newURL = getLocationMapSrc(lati, longi, tags, 12);
                 document.getElementById("result-img").setAttribute("src", newURL);
             }
@@ -155,6 +158,10 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
 
                 console.log(latiInForm);
                 console.log(longInForm);
+
+                var taglist_json = document.getElementById("result-img").getAttribute("data-tags");
+                tags = JSON.parse(taglist_json);
+
                 var newURL = getLocationMapSrc(latiInForm, longInForm, tags, 12);
                 document.getElementById("result-img").setAttribute("src", newURL);
             } else {
