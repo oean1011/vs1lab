@@ -40,15 +40,12 @@
 						<div class="container-gt">
 							<label for="text_field_latitude"> latitude </label>
 							<input type="text" name="latitude" id="text_field_latitude" placeholder="69.01379"
-								   required
-								   <%if(taglist!=undefined) {%>
-									value="<%=latitudeNext%>"
-									<%};%> />
+								   required <%if(locals.latitudeNext) {%> value="<%=latitudeNext%>" <%};%> />
 
 							<label for="text_field_longitude"> longitude </label>
 							<input type="text" name="longitude" id="text_field_longitude" placeholder="69.01379"
 								   required
-								   <%if(taglist!=undefined) {%>
+								   <%if(locals.longitudeNext) {%>
 									value="<%=longitudeNext%>"
 									<%};%> />
 
@@ -78,15 +75,15 @@
 					<form id="filter-form" action="/discovery" method="post">
 						<label for="searchterm"></label>
 						<input type="text" placeholder="search term" name="searchterm" id="searchterm" 
-							<%if(taglist!=undefined) {%>
+							<%if(locals.term) {%>
 								value="<%=term%>"
 							<%};%> />
 						<input id="latitudehidden" name="latitudehidden" type="hidden"
-							<%if(taglist!=undefined) {%>
+							<%if(locals.hiddenLatNext) {%>
 								value="<%=hiddenLatNext%>"
 							<%};%> />
 						<input id="longitudehidden" name="longitudehidden" type="hidden"
-							<%if(taglist!=undefined) {%>
+							<%if(locals.hiddenLongNext) {%>
 								value="<%=hiddenLongNext%>"
 							<%};%> />
 						<input id="submit-search" type="submit" value="apply">
@@ -109,7 +106,7 @@
 
 					<div class="tagmap">
 							<img id="result-img" src="./images/mapview.jpg" alt="a map with locations" 
-							<%if(taglist!=undefined) {%>
+							<%if(locals.taglist) {%>
 								data-tags="<%=JSON.stringify(taglist)%>"
 							<%};%> />
 
