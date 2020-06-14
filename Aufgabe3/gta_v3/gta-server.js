@@ -115,6 +115,7 @@ app.get('/', function(req, res) {
  */
 
 app.post('/tagging', function(req, res) {
+
     //req.body enthält Daten aus dem Tagging-Formular beim Absenden
     addTag(req.body.latitude, req.body.longitude, req.body.tagname, req.body.taghashtag);
 
@@ -141,6 +142,7 @@ app.post('/tagging', function(req, res) {
  */
 
 app.post('/discovery', function(req, res) {
+    
     //req.body enthält Daten aus dem Discovery-Formular beim Absenden
     closeTags = [];
 

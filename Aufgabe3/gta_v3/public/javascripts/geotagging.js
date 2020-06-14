@@ -124,9 +124,11 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
         updateLocation: function () {
             var tags = [];
 
+            //Enthält etwas wenn die Seite mit /tagging POST-Request geladen wurde
             var latiInForm = document.getElementById("text_field_latitude").value;
             var longInForm = document.getElementById("text_field_longitude").value;
 
+            //Enthält etwas wenn die Seite mit /discovery POST-Request geladen wurde
             if (latiInForm == "" && longInForm == "") {
                 var latiInForm = document.getElementById("latitudehidden").value;
                 var longInForm = document.getElementById("longitudehidden").value;
@@ -146,6 +148,8 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
                 console.log(msg);
             }
 
+
+            //Wenn leer = Kein POST-Request, Koordinaten müssen bestimmt werden
             if (latiInForm == "" && longInForm == "") {
                 tryLocate(erfolg, keinErfolg);
             }
