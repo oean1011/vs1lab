@@ -56,12 +56,12 @@ app.use(express.static(__dirname + '/public'));
 
 var geoTags = [];
 var closeTags = [];
+var range = 1;
 
 var searchByRadius = function(latitude2, longitude2, closeTags) {
-    
     for (index = 0; index < geoTags.length; index++) {
-        if(geoTags[index].latitude - latitude2 <= 1 && geoTags[index].latitude - latitude2 >= -1) {
-            if(geoTags[index].longitude - longitude2 <= 1 && geoTags[index].longitude - longitude2 >= -1) {
+        if(geoTags[index].latitude - latitude2 <= range && geoTags[index].latitude - latitude2 >= -range) {
+            if(geoTags[index].longitude - longitude2 <= range && geoTags[index].longitude - longitude2 >= -range) {
                 closeTags.push(geoTags[index]);
             }
         }
@@ -79,8 +79,6 @@ var searchByTerm = function(searchterm, closeTags) {
 var addTag = function(latitude, longitude, name, hashtag) {
     var newTag = new GeoTag(latitude, longitude, name, hashtag);
     geoTags.push(newTag);
-
-    console.log(geoTags);
 };
 
 var removeTag = function(index) {
@@ -117,11 +115,10 @@ app.get('/', function(req, res) {
  */
 
 app.post('/tagging', function(req, res) {
-    console.log(req.body);
+    //req.body enthält Daten aus dem Tagging-Formular beim Absenden
     addTag(req.body.latitude, req.body.longitude, req.body.tagname, req.body.taghashtag);
 
     closeTags = [];
-
     searchByRadius(req.body.latitude, req.body.longitude, closeTags);
 
     res.render('gta', {
@@ -144,6 +141,7 @@ app.post('/tagging', function(req, res) {
  */
 
 app.post('/discovery', function(req, res) {
+    //req.body enthält Daten aus dem Discovery-Formular beim Absenden
     closeTags = [];
 
     if(req.body.searchterm == "") {
