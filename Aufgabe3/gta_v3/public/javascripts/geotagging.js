@@ -119,48 +119,49 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
 
         readme: "Dieses Objekt enthält 'öffentliche' Teile des Moduls.",
 
-        //TODO: clean up und refractoring
-
         updateLocation: function () {
             var tags = [];
+            var latiInForm = "";
+            var longInForm = "";
 
             //Enthält etwas wenn die Seite mit /tagging POST-Request geladen wurde
-            var latiInForm = document.getElementById("text_field_latitude").value;
-            var longInForm = document.getElementById("text_field_longitude").value;
+            latiInForm = document.getElementById("text_field_latitude").value;
+            longInForm = document.getElementById("text_field_longitude").value;
 
             //Enthält etwas wenn die Seite mit /discovery POST-Request geladen wurde
             if (latiInForm == "" && longInForm == "") {
-                var latiInForm = document.getElementById("latitudehidden").value;
-                var longInForm = document.getElementById("longitudehidden").value;
+                latiInForm = document.getElementById("latitudehidden").value;
+                longInForm = document.getElementById("longitudehidden").value;
             }
 
             var erfolg = function (position) { //Callback für tryLocate
-                var latiInForm = getLatitude(position);
-                var longInForm = getLongitude(position);
+                console.log("wird ausgeführt");
+                latiInForm = getLatitude(position);
+                longInForm = getLongitude(position);
 
                 document.getElementById("text_field_latitude").setAttribute("value", latiInForm);
                 document.getElementById("text_field_longitude").setAttribute("value", longInForm);
                 document.getElementById("latitudehidden").setAttribute("value", latiInForm);
                 document.getElementById("longitudehidden").setAttribute("value", longInForm);
+
+                var newURL = getLocationMapSrc(latiInForm, longInForm, tags, 12);
+                document.getElementById("result-img").setAttribute("src", newURL);
             }
 
             var keinErfolg = function (msg) { //Callback für tryLocate
                 console.log(msg);
             }
 
-
             //Wenn leer = Kein POST-Request, Koordinaten müssen bestimmt werden
             if (latiInForm == "" && longInForm == "") {
                 tryLocate(erfolg, keinErfolg);
+            } else {
+                var taglist_json = document.getElementById("result-img").getAttribute("data-tags");
+                tags = JSON.parse(taglist_json);
+
+                var newURL = getLocationMapSrc(latiInForm, longInForm, tags, 12);
+                document.getElementById("result-img").setAttribute("src", newURL);
             }
-
-            var taglist_json = document.getElementById("result-img").getAttribute("data-tags");
-            tags = JSON.parse(taglist_json);
-
-            var newURL = getLocationMapSrc(latiInForm, longInForm, tags, 12);
-            document.getElementById("result-img").setAttribute("src", newURL);
-
-
         }
     }; // ... Ende öffentlicher Teil
 })(GEOLOCATIONAPI);
