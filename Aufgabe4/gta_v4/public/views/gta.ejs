@@ -1,0 +1,133 @@
+
+	<!-- TODO: HTML AUS AUFGABE2 HIERHER KOPIEREN UND DIE BEISPIEL-EINTRÄGE DER DISCOVERY-LISTE MIT DEN FOLGENDEN ZEILEN ERSETZEN -->
+
+	<!DOCTYPE html>
+	<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>GeoTagApp</title>
+		<link rel='stylesheet' href="./stylesheets/style.css" />
+		<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
+	</head>
+
+	<body>
+
+	<header>
+		<div id="header-content">
+			<img src="./images/location.png" width="100" alt="an image of a map and location">
+			<h1>GeoTagApp</h1>
+			<nav>
+				<a href="#" class="nav-links">About</a> | <a href="#" class="nav-links">Help</a> | <a href="/"
+																									  class="nav-links">Home</a>
+			</nav>
+		</div>
+	</header>
+
+	<main>
+		<div id="container">
+
+			<section class="tagging">
+				<h2>Tagging</h2>
+
+				<!-- ############### Aufgabe1a Form1 Start -->
+				<fieldset>
+					<legend>Enter a new Geotag</legend>
+
+					<form id="tag-form" action="/tagging" method="post">
+						<div class="container-gt">
+							<label for="text_field_latitude"> latitude </label>
+							<input type="text" name="latitude" id="text_field_latitude" placeholder="69.01379"
+								   required <%if(locals.latitudeNext){%> value="<%=latitudeNext%>" <%};%> />
+
+							<label for="text_field_longitude"> longitude </label>
+							<input type="text" name="longitude" id="text_field_longitude" placeholder="69.01379"
+								   required
+								   <%if(locals.longitudeNext) {%>
+									value="<%=longitudeNext%>"
+									<%};%> />
+
+							<label for="text_field_name"> name </label>
+							<input type="text" name="tagname" id="text_field_name" placeholder="some name" required
+								   pattern="[A-Za-z]{1,10}" />
+
+							<label for="text_field_hashtag"> hashtag </label>
+							<input type="text" name="taghashtag" id="text_field_hashtag" pattern="[#]{1}[A-Za-z]{0,10}"
+								   placeholder="# + max. 10 letters" />
+
+							<input type="submit" value="submit" id="submit-tagging">
+						</div>
+					</form>
+
+				</fieldset>
+				<!-- ############### Aufgabe1a Form1 Ende -->
+
+			</section>
+			<section class="discovery">
+				<h2>Discovery</h2>
+
+				<!-- ############### Aufgabe1a Form2 Start -->
+				<fieldset>
+					<legend>Filter by Searchterm</legend>
+
+					<form id="filter-form" action="/discovery" method="post">
+						<label for="searchterm"></label>
+						<input type="text" placeholder="search term" name="searchterm" id="searchterm" 
+							<%if(locals.term) {%>
+								value="<%=term%>"
+							<%};%> />
+						<input id="latitudehidden" name="latitudehidden" type="hidden"
+							<%if(locals.hiddenLatNext) {%>
+								value="<%=hiddenLatNext%>"
+							<%};%> />
+						<input id="longitudehidden" name="longitudehidden" type="hidden"
+							<%if(locals.hiddenLongNext) {%>
+								value="<%=hiddenLongNext%>"
+							<%};%> />
+						<input id="submit-search" type="submit" value="apply">
+
+ 
+					</form>
+
+
+				</fieldset>
+
+				<!-- ############### Aufgabe1a Form2 Ende -->
+				<div class="container-map">
+					<div class="taglist">
+						<ul id="results">
+							<% if (taglist !== undefined) taglist.forEach(function(gtag) { %>
+								<li><%= gtag.name %> ( <%= gtag.latitude %>,<%= gtag.longitude %>) <%= gtag.hashtag %> </li>
+							<% }); %>
+						</ul>
+					</div>
+
+					<div class="tagmap">
+							<img id="result-img" src="./images/mapview.jpg" alt="a map with locations" 
+							<%if(locals.taglist) {%>
+								data-tags="<%=JSON.stringify(taglist)%>"
+							<%};%> />
+
+						<div class="caption">Result map</div>
+					</div>
+				</div>
+			</section>
+		</div>
+
+	</main>
+
+	<footer>
+		<span id="footer-text">2020 by LKIT</span>
+	</footer>
+
+	<!-- Load JavaScripts
+    ================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+	<script src="./javascripts/geotagging.js"></script>
+
+	</body>
+
+	</html>
