@@ -173,4 +173,56 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
  */
 $(function () {
     gtaLocator.updateLocation();
+   
+    var ajax = new XMLHttpRequest();
+
+    // Funktion, die bei Statusänderung
+    // aufgerufen wird
+    ajax.onreadystatechange = function () {
+        // Zustand von Interesse
+        if (ajax.readyState == 4) {
+           
+        }
+    }; //Ende der Funktion
+
+    document.getElementById("submit-tagging").addEventListener("click", function () {
+        ajax.open("POST", "/tagging", true); //true bedeutet asynchroner Request
+
+        class GeoTag {
+            constructor(latitude, longitude, name, hashtag) {
+                this.latitude = latitude;
+                this.longitude = longitude;
+                this.name = name;
+                this.hashtag = hashtag;
+            }
+        }
+
+        var newLat = document.getElementById("text_field_latitude").getAttribute("value");
+        var newLong = document.getElementById("text_field_longitude").getAttribute("value");
+        var newName = document.getElementById("text_field_name").getAttribute("value");
+        var newHashtag = document.getElementById("text_field_hashtag").getAttribute("value");
+
+        var newTag = new GeoTag(newLat, newLong, newName, newHashtag);
+
+        ajax.setRequestHeader("Content-Type", "application/json");
+
+        ajax.send(JSON.stringify(newTag));
+    });
+
+    document.getElementById("submit-search").addEventListener("click", function () {
+
+        var searchname = document.getElementById("text_field_name").getAttribute("value");
+        var searchlat = document.getElementById("text_field_latitude").getAttribute("value");
+        var searchlong = document.getElementById("text_field_longitude").getAttribute("value");
+ 
+        var params = "searchname=" + searchname + "&searchlat=" + searchlat + "&searchlong=" + searchlong;
+
+        ajax.open("GET", "/discovery?"+params, true);
+
+        ajax.send(null);
+    });
+
+
+
+
 });
