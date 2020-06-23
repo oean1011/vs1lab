@@ -101,6 +101,8 @@ app.get('/', function(req, res) {
     });
 });
 
+var jsonParser = bodyParser.json();
+
 /**
  * Route mit Pfad '/tagging' für HTTP 'POST' Requests.
  * (http://expressjs.com/de/4x/api.html#app.post.method)
@@ -114,7 +116,7 @@ app.get('/', function(req, res) {
  * Die Objekte liegen in einem Standard Radius um die Koordinate (lat, lon).
  */
 
-app.post('/tagging', function(req, res) {
+app.post('/tagging', jsonParser, function(req, res) {
 
     //req.body enthält Daten aus dem Tagging-Formular beim Absenden
     addTag(req.body.latitude, req.body.longitude, req.body.tagname, req.body.taghashtag);
@@ -122,7 +124,7 @@ app.post('/tagging', function(req, res) {
     closeTags = [];
     searchByRadius(req.body.latitude, req.body.longitude, closeTags);
 
-    res.render('gta', {
+    res.send({
         latitudeNext: req.body.latitude,
         longitudeNext: req.body.longitude,
         taglist: closeTags

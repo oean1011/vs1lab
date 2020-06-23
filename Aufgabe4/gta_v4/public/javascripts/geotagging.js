@@ -117,6 +117,14 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
 
         // Public Member
 
+        readme: "Zum updaten der Map über AJAX",
+
+        refreshMap: function (latitudeNextt, longitudeNextt, taglistt) {
+            var updateMap = getLocationMapSrc(latitudeNextt, longitudeNextt, taglistt, 12);
+            console.log(latitudeNextt, longitudeNextt, taglistt);
+            document.getElementById("result-img").setAttribute("src", updateMap);
+        },
+
         readme: "Dieses Objekt enthält 'öffentliche' Teile des Moduls.",
 
         updateLocation: function () {
@@ -163,6 +171,8 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
                 document.getElementById("result-img").setAttribute("src", newURL);
             }
         }
+
+
     }; // ... Ende öffentlicher Teil
 })(GEOLOCATIONAPI);
 
@@ -173,19 +183,18 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
  */
 $(function () {
     gtaLocator.updateLocation();
-   
-    var ajax = new XMLHttpRequest();
-
-    // Funktion, die bei Statusänderung
-    // aufgerufen wird
-    ajax.onreadystatechange = function () {
-        // Zustand von Interesse
-        if (ajax.readyState == 4) {
-           
-        }
-    }; //Ende der Funktion
 
     document.getElementById("submit-tagging").addEventListener("click", function () {
+        event.preventDefault();
+
+        var ajax = new XMLHttpRequest();
+        ajax.onreadystatechange = function () {
+            if (ajax.readyState === 4 && ajax.status === 200) {
+                var responseItems = JSON.parse(ajax.responseText);
+                gtaLocator.refreshMap(responseItems.latitudeNext, responseItems.longitudeNext, responseItems.taglist);
+                //Map wieder updaten wenn Server mit neuen Tags geantwortet hat
+            }
+        };
         ajax.open("POST", "/tagging", true); //true bedeutet asynchroner Request
 
         class GeoTag {
@@ -197,19 +206,25 @@ $(function () {
             }
         }
 
-        var newLat = document.getElementById("text_field_latitude").getAttribute("value");
+        var newLat = document.getElementById("text_field_latitude").getAttribute("value"); //TODO: Nimmt warum auch immer default-values beim Anfangsladen der Seite
         var newLong = document.getElementById("text_field_longitude").getAttribute("value");
         var newName = document.getElementById("text_field_name").getAttribute("value");
         var newHashtag = document.getElementById("text_field_hashtag").getAttribute("value");
 
         var newTag = new GeoTag(newLat, newLong, newName, newHashtag);
+        var jsonTag = JSON.stringify(newTag);
 
         ajax.setRequestHeader("Content-Type", "application/json");
+        ajax.setRequestHeader("Data-Type", "json");
 
-        ajax.send(JSON.stringify(newTag));
+        console.log(jsonTag);
+
+        ajax.send(jsonTag);
     });
 
-    document.getElementById("submit-search").addEventListener("click", function () {
+    document.getElementById("submit-search").addEventListener("click", function () { //TODO: Funktioniert noch nicht
+        event.preventDefault();
+        var ajax2 = new XMLHttpRequest();
 
         var searchname = document.getElementById("text_field_name").getAttribute("value");
         var searchlat = document.getElementById("text_field_latitude").getAttribute("value");
@@ -217,12 +232,9 @@ $(function () {
  
         var params = "searchname=" + searchname + "&searchlat=" + searchlat + "&searchlong=" + searchlong;
 
-        ajax.open("GET", "/discovery?"+params, true);
+        ajax2.open("GET", "/discovery?"+params, true);
 
-        ajax.send(null);
+        ajax2.send(null);
     });
-
-
-
 
 });
