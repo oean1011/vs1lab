@@ -184,7 +184,10 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
 $(function () {
     gtaLocator.updateLocation();
 
-    document.getElementById("submit-tagging").addEventListener("click", function () {
+    var submitTag = document.getElementById("submit-tagging");
+    var submitDiscovery = document.getElementById("button-search");
+
+    submitTag.addEventListener("click", function () {
         event.preventDefault();
 
         var ajax = new XMLHttpRequest();
@@ -192,7 +195,15 @@ $(function () {
             if (ajax.readyState === 4 && ajax.status === 200) {
                 var responseItems = JSON.parse(ajax.responseText);
                 gtaLocator.refreshMap(responseItems.latitudeNext, responseItems.longitudeNext, responseItems.taglist);
-                //Map wieder updaten wenn Server mit neuen Tags geantwortet hat
+                
+                document.getElementById("results").innerHTML = '';
+                responseItems.taglist.forEach(function(gtag) {
+                    var ul = document.getElementById("results");
+                    
+                    var li = document.createElement("li");
+                    li.appendChild(document.createTextNode(gtag.name + " (" + gtag.latitude + ", " + gtag.longitude + ") " + gtag.hashtag));
+                    ul.appendChild(li);
+                });
             }
         };
         ajax.open("POST", "/tagging", true); //true bedeutet asynchroner Request
@@ -206,13 +217,14 @@ $(function () {
             }
         }
 
-        var newLat = document.getElementById("text_field_latitude").getAttribute("value"); //TODO: Nimmt warum auch immer default-values beim Anfangsladen der Seite
-        var newLong = document.getElementById("text_field_longitude").getAttribute("value");
-        var newName = document.getElementById("text_field_name").getAttribute("value");
-        var newHashtag = document.getElementById("text_field_hashtag").getAttribute("value");
+        var newLat = document.getElementById("text_field_latitude").value; //TODO: Nimmt warum auch immer default-values beim Anfangsladen der Seite
+        var newLong = document.getElementById("text_field_longitude").value;
+        var newName = document.getElementById("text_field_name").value;
+        var newHashtag = document.getElementById("text_field_hashtag").value;
 
         var newTag = new GeoTag(newLat, newLong, newName, newHashtag);
         var jsonTag = JSON.stringify(newTag);
+
 
         ajax.setRequestHeader("Content-Type", "application/json");
         ajax.setRequestHeader("Data-Type", "json");
@@ -222,17 +234,43 @@ $(function () {
         ajax.send(jsonTag);
     });
 
-    document.getElementById("submit-search").addEventListener("click", function () { //TODO: Funktioniert noch nicht
+    submitDiscovery.addEventListener("click", function () { //TODO: Funktioniert noch nicht
         event.preventDefault();
         var ajax2 = new XMLHttpRequest();
+        ajax2.onreadystatechange = function () {
+            if (ajax2.readyState === 4 && ajax2.status === 200) {
+                var responseItems = JSON.parse(ajax2.responseText);
+                
+                document.getElementById("results").innerHTML = '';
+                responseItems.taglist.forEach(function(gtag) {
+                    var ul = document.getElementById("results");
+                    
+                    var li = document.createElement("li");
+                    li.appendChild(document.createTextNode(gtag.name + " (" + gtag.latitude + ", " + gtag.longitude + ") " + gtag.hashtag));
+                    ul.appendChild(li);
+                });
 
-        var searchname = document.getElementById("text_field_name").getAttribute("value");
-        var searchlat = document.getElementById("text_field_latitude").getAttribute("value");
-        var searchlong = document.getElementById("text_field_longitude").getAttribute("value");
+                if (responseItems.isTermEmpty == 1) {
+                    console.log("isTermEmpty = 1");
+                    gtaLocator.refreshMap(responseItems.hiddenLatNext, responseItems.hiddenLongNext, responseItems.taglist);
+                } else {
+                    console.log(responseItems.taglist);
+                    gtaLocator.refreshMap(responseItems.taglist[0].latitude, responseItems.taglist[0].longitude, responseItems.taglist); 
+                }
+            }
+        };
+
+        var searchname = document.getElementById("searchterm").value;
+        var searchlat = document.getElementById("latitudehidden").value;
+        var searchlong = document.getElementById("longitudehidden").value;
+
+        console.log("Sende searchterm:" + searchname);
+        console.log("Sende lathidden:" + searchlat);
+        console.log("Sende longhidden:" + searchlong);
  
         var params = "searchname=" + searchname + "&searchlat=" + searchlat + "&searchlong=" + searchlong;
 
-        ajax2.open("GET", "/discovery?"+params, true);
+        ajax2.open("GET", "/discovery?" + params, true);
 
         ajax2.send(null);
     });

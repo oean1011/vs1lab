@@ -36,7 +36,7 @@
 				<fieldset>
 					<legend>Enter a new Geotag</legend>
 
-					<form id="tag-form" action="/tagging" method="POST">
+					<form id="tag-form" action="" method="">
 						<div class="container-gt">
 							<label for="text_field_latitude"> latitude </label>
 							<input type="text" name="latitude" id="text_field_latitude" placeholder="69.01379"
@@ -72,7 +72,7 @@
 				<fieldset>
 					<legend>Filter by Searchterm</legend>
 
-					<form id="filter-form" action="" method="">
+					<form id="filter-form" action="#" method="">
 						<label for="searchterm"></label>
 						<input type="text" placeholder="search term" name="searchterm" id="searchterm" 
 							<%if(locals.term) {%>
@@ -86,7 +86,7 @@
 							<%if(locals.hiddenLongNext) {%>
 								value="<%=hiddenLongNext%>"
 							<%};%> />
-						<input id="submit-search" type="submit" value="apply">
+						<input id="button-search" type="submit" value="apply">
 
  
 					</form>

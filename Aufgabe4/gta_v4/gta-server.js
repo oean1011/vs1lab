@@ -81,6 +81,12 @@ var addTag = function(latitude, longitude, name, hashtag) {
     geoTags.push(newTag);
 };
 
+var addTagWithId = function(latitude, longitude, name, hashtag) {
+    var newTag = new GeoTag(latitude, longitude, name, hashtag);
+    geoTags.push(newTag);
+    return geoTags.length - 1;
+};
+
 var removeTag = function(index) {
     geoTags.splice(index, 1);
 }
@@ -119,7 +125,7 @@ var jsonParser = bodyParser.json();
 app.post('/tagging', jsonParser, function(req, res) {
 
     //req.body enthält Daten aus dem Tagging-Formular beim Absenden
-    addTag(req.body.latitude, req.body.longitude, req.body.tagname, req.body.taghashtag);
+    addTag(req.body.latitude, req.body.longitude, req.body.name, req.body.hashtag);
 
     closeTags = [];
     searchByRadius(req.body.latitude, req.body.longitude, closeTags);
@@ -143,7 +149,7 @@ app.post('/tagging', jsonParser, function(req, res) {
  * Falls 'term' vorhanden ist, wird nach Suchwort gefiltert.
  */
 
-app.post('/discovery', function(req, res) {
+app.post('/discovery', function(req, res) { //macht jetzt nichts mehr?
     
     //req.body enthält Daten aus dem Discovery-Formular beim Absenden
     closeTags = [];
@@ -160,6 +166,85 @@ app.post('/discovery', function(req, res) {
         term: req.body.searchterm,
         taglist: closeTags
     });
+});
+
+app.get('/discovery', function(req, res) {
+
+    //req.body enthält Daten aus dem Discovery-Formular beim Absenden
+    closeTags = [];
+    var isTermEmpty;
+
+    if(req.query.searchname == "") {
+        isTermEmpty = 1;
+        searchByRadius(req.query.searchlat, req.query.searchlong, closeTags);
+    } else {
+        isTermEmpty = 0;
+        console.log("term");
+        searchByTerm(req.query.searchname, closeTags);
+
+        if(closeTags.length == 0) {
+            isTermEmpty = 1; //Falls nichts mit dem Suchbegriff gefunden wird, Karte mit unserem Standort laden
+        }
+    }
+
+    res.send({
+        isTermEmpty: isTermEmpty,
+        hiddenLatNext: req.query.searchlat,
+        hiddenLongNext: req.query.searchlong,
+        taglist: closeTags
+    });
+});
+
+app.post('/geotags', jsonParser, function(req, res) { 
+    var newId = addTagWithId(req.body.latitude, req.body.longitude, req.body.name, req.body.hashtag);
+    res.location('/geotags/' + newId);
+    res.sendStatus(201);
+});
+
+app.get('/geotags', jsonParser, function(req, res) {
+    var closeTags = [];
+    console.log(req.body.searchlatitude);
+    console.log(req.body.searchlongitude);
+
+    if (req.body.searchterm != "" && req.body.searchterm != null) {
+        console.log("searching by term");
+        searchByTerm(req.body.searchterm, closeTags);
+
+        if (closeTags.length == 0) {
+            res.sendStatus(406);
+        } else {
+            res.status(200).send({
+                results: closeTags
+            });
+        }
+    } else if (req.body.searchlatitude != "") {
+        if (req.body.searchlongitude != "") {
+            console.log("searching by radius");
+            searchByRadius(req.body.searchlatitude, req.body.searchlongitude, closeTags);
+    
+            if (closeTags.length == 0) {
+                res.sendStatus(406);
+            } else {
+                res.status(200).send({
+                    results: closeTags
+                });
+            }
+        }
+    } else {
+        res.sendStatus(400); //Not acceptable
+    }
+});
+
+app.get('/geotags/[0-9]+', function(req, res) {
+
+});
+
+app.put('/geotags/[0-9]+', function(req, res) {
+
+});
+
+app.delete('/geotags/[0-9]+', function(req, res) {
+    
 });
 
 /**
