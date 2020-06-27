@@ -68,10 +68,28 @@ var searchByRadius = function(latitude2, longitude2, closeTags) {
     }
 };
 
+var searchByRadiusWithId = function(latitude2, longitude2, closeTags) {
+    for (index = 0; index < geoTags.length; index++) {
+        if(geoTags[index].latitude - latitude2 <= range && geoTags[index].latitude - latitude2 >= -range) {
+            if(geoTags[index].longitude - longitude2 <= range && geoTags[index].longitude - longitude2 >= -range) {
+                closeTags.push([geoTags[index], "Location: /geotags/" + index]);
+            }
+        }
+    }
+};
+
 var searchByTerm = function(searchterm, closeTags) {
     for (index = 0; index < geoTags.length; index++) {
         if(geoTags[index].name.includes(searchterm)) {
             closeTags.push(geoTags[index]);
+        }
+    }
+};
+
+var searchByTermWithId = function(searchterm, closeTags) {
+    for (index = 0; index < geoTags.length; index++) {
+        if(geoTags[index].name.includes(searchterm)) {
+            closeTags.push([geoTags[index], "Location: /geotags/" + index]);
         }
     }
 };
@@ -203,12 +221,9 @@ app.post('/geotags', jsonParser, function(req, res) {
 
 app.get('/geotags', jsonParser, function(req, res) {
     var closeTags = [];
-    console.log(req.body.searchlatitude);
-    console.log(req.body.searchlongitude);
 
     if (req.body.searchterm != "" && req.body.searchterm != null) {
-        console.log("searching by term");
-        searchByTerm(req.body.searchterm, closeTags);
+        searchByTermWithId(req.body.searchterm, closeTags);
 
         if (closeTags.length == 0) {
             res.sendStatus(406);
@@ -219,11 +234,10 @@ app.get('/geotags', jsonParser, function(req, res) {
         }
     } else if (req.body.searchlatitude != "") {
         if (req.body.searchlongitude != "") {
-            console.log("searching by radius");
-            searchByRadius(req.body.searchlatitude, req.body.searchlongitude, closeTags);
+            searchByRadiusWithId(req.body.searchlatitude, req.body.searchlongitude, closeTags);
     
             if (closeTags.length == 0) {
-                res.sendStatus(406);
+                res.sendStatus(404);
             } else {
                 res.status(200).send({
                     results: closeTags
@@ -235,16 +249,37 @@ app.get('/geotags', jsonParser, function(req, res) {
     }
 });
 
-app.get('/geotags/[0-9]+', function(req, res) {
-
+app.get('/geotags/:userId([0-9]+)', function(req, res) {
+    if(geoTags.length > req.params.userId) {
+        res.status(200).send({
+            result: geoTags[req.params.userId]
+        });
+    } else {
+        res.sendStatus(404);
+    }
 });
 
-app.put('/geotags/[0-9]+', function(req, res) {
+app.put('/geotags/:userId([0-9]+)', jsonParser, function(req, res) {
+    if(geoTags.length > req.params.userId) {
+        newTag = new GeoTag(req.body.latitude, req.body.longitude, req.body.name, req.body.hashtag);
+        geoTags[req.params.userId] = newTag;
 
+        res.status(200).send({
+            result: geoTags[req.params.userId]
+        });
+    } else {
+        res.sendStatus(404);
+    }
 });
 
-app.delete('/geotags/[0-9]+', function(req, res) {
-    
+app.delete('/geotags/:userId([0-9]+)', function(req, res) {
+    if(geoTags.length > req.params.userId) {
+        removeTag(req.params.userId);
+
+        res.sendStatus(200);
+    } else {
+        res.sendStatus(404);
+    }
 });
 
 /**
