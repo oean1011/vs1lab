@@ -192,17 +192,17 @@ $(function () {
 
         var ajax = new XMLHttpRequest();
         ajax.onreadystatechange = function () {
-            if (ajax.readyState === 4 && ajax.status === 200) {
+            if (ajax.readyState === 4 && ajax.status === 200) { //Map und Taglist updaten nach Response
                 var responseItems = JSON.parse(ajax.responseText);
                 gtaLocator.refreshMap(responseItems.latitudeNext, responseItems.longitudeNext, responseItems.taglist);
                 
-                document.getElementById("results").innerHTML = '';
+                document.getElementById("results").innerHTML = ''; //Taglist leeren
                 responseItems.taglist.forEach(function(gtag) {
                     var ul = document.getElementById("results");
                     
-                    var li = document.createElement("li");
+                    var li = document.createElement("li"); //Neues Element erstellen
                     li.appendChild(document.createTextNode(gtag.name + " (" + gtag.latitude + ", " + gtag.longitude + ") " + gtag.hashtag));
-                    ul.appendChild(li);
+                    ul.appendChild(li); //An Liste fügen
                 });
             }
         };
@@ -229,19 +229,17 @@ $(function () {
         ajax.setRequestHeader("Content-Type", "application/json");
         ajax.setRequestHeader("Data-Type", "json");
 
-        console.log(jsonTag);
-
         ajax.send(jsonTag);
     });
 
     submitDiscovery.addEventListener("click", function () { //TODO: Funktioniert noch nicht
         event.preventDefault();
         var ajax2 = new XMLHttpRequest();
-        ajax2.onreadystatechange = function () {
+        ajax2.onreadystatechange = function () { //Map updaten nach Response
             if (ajax2.readyState === 4 && ajax2.status === 200) {
                 var responseItems = JSON.parse(ajax2.responseText);
                 
-                document.getElementById("results").innerHTML = '';
+                document.getElementById("results").innerHTML = ''; //Taglist updaten
                 responseItems.taglist.forEach(function(gtag) {
                     var ul = document.getElementById("results");
                     
@@ -251,10 +249,9 @@ $(function () {
                 });
 
                 if (responseItems.isTermEmpty == 1) {
-                    console.log("isTermEmpty = 1");
                     gtaLocator.refreshMap(responseItems.hiddenLatNext, responseItems.hiddenLongNext, responseItems.taglist);
                 } else {
-                    console.log(responseItems.taglist);
+                    //Falls Searchterm vorhanden gewesen, dann nimm ersten, übereinstimmenden Tag als Zentrum
                     gtaLocator.refreshMap(responseItems.taglist[0].latitude, responseItems.taglist[0].longitude, responseItems.taglist); 
                 }
             }

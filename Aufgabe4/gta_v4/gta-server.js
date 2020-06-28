@@ -78,6 +78,13 @@ var searchByRadiusWithId = function(latitude2, longitude2, closeTags) {
     }
 };
 
+var returnAll = function(closeTags) {
+    for (index = 0; index < geoTags.length; index++) {
+            closeTags.push([geoTags[index], "Location: /geotags/" + index]);
+    }
+};
+
+
 var searchByTerm = function(searchterm, closeTags) {
     for (index = 0; index < geoTags.length; index++) {
         if(geoTags[index].name.includes(searchterm)) {
@@ -192,6 +199,7 @@ app.get('/discovery', function(req, res) {
     closeTags = [];
     var isTermEmpty;
 
+    //req.query statt req.body wegen Query-Parameter
     if(req.query.searchname == "") {
         isTermEmpty = 1;
         searchByRadius(req.query.searchlat, req.query.searchlong, closeTags);
@@ -213,27 +221,31 @@ app.get('/discovery', function(req, res) {
     });
 });
 
-app.post('/geotags', jsonParser, function(req, res) { 
+//
+//REST-API Routen
+//
+
+app.post('/geotags', jsonParser, function(req, res) { //Neuen Tag einfügen
     var newId = addTagWithId(req.body.latitude, req.body.longitude, req.body.name, req.body.hashtag);
     res.location('/geotags/' + newId);
     res.sendStatus(201);
 });
 
-app.get('/geotags', jsonParser, function(req, res) {
+app.get('/geotags', jsonParser, function(req, res) { //Alle Tags abrufen (optional mit Filter)
     var closeTags = [];
 
     if (req.body.searchterm != "" && req.body.searchterm != null) {
         searchByTermWithId(req.body.searchterm, closeTags);
 
         if (closeTags.length == 0) {
-            res.sendStatus(406);
+            res.sendStatus(404);
         } else {
             res.status(200).send({
                 results: closeTags
             });
         }
-    } else if (req.body.searchlatitude != "") {
-        if (req.body.searchlongitude != "") {
+    } else if (req.body.searchlatitude != "" && req.body.searchlatitude != null) {
+        if (req.body.searchlongitude != "" && req.body.searchlongitude != null) {
             searchByRadiusWithId(req.body.searchlatitude, req.body.searchlongitude, closeTags);
     
             if (closeTags.length == 0) {
@@ -245,11 +257,14 @@ app.get('/geotags', jsonParser, function(req, res) {
             }
         }
     } else {
-        res.sendStatus(400); //Not acceptable
+        returnAll(closeTags);
+        res.status(200).send({
+            results: closeTags
+        });
     }
 });
 
-app.get('/geotags/:userId([0-9]+)', function(req, res) {
+app.get('/geotags/:userId([0-9]+)', function(req, res) { //Get-Request für einen einzelnen Tag
     if(geoTags.length > req.params.userId) {
         res.status(200).send({
             result: geoTags[req.params.userId]
@@ -259,7 +274,7 @@ app.get('/geotags/:userId([0-9]+)', function(req, res) {
     }
 });
 
-app.put('/geotags/:userId([0-9]+)', jsonParser, function(req, res) {
+app.put('/geotags/:userId([0-9]+)', jsonParser, function(req, res) { //Ändern eines existierenden Objektes mit ID
     if(geoTags.length > req.params.userId) {
         newTag = new GeoTag(req.body.latitude, req.body.longitude, req.body.name, req.body.hashtag);
         geoTags[req.params.userId] = newTag;
@@ -272,7 +287,7 @@ app.put('/geotags/:userId([0-9]+)', jsonParser, function(req, res) {
     }
 });
 
-app.delete('/geotags/:userId([0-9]+)', function(req, res) {
+app.delete('/geotags/:userId([0-9]+)', function(req, res) { //Löschen eines existierenden Objektes mit ID
     if(geoTags.length > req.params.userId) {
         removeTag(req.params.userId);
 
